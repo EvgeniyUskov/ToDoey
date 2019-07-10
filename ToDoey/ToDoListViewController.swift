@@ -10,9 +10,14 @@ import UIKit
 
 class ToDoListViewController: UITableViewController {
 
-    let itemArray = ["Find Mike", "Buy eggos", "Destroy Demogorogn "]
+    var defaults = UserDefaults.standard
+    
+    var itemArray = ["Find Mike", "Buy eggos", "Destroy Demogorogn "]
     override func viewDidLoad() {
         super.viewDidLoad()
+        if let items = defaults.array(forKey: "ToDoListArray") as? [String] {
+            itemArray = items
+        }
      }
 
     // MARK: TableView DataSource methods
@@ -38,6 +43,33 @@ class ToDoListViewController: UITableViewController {
         }
         tableView.deselectRow(at: indexPath, animated: true)
     }
-    
+
+    // MARK: Add item methods
+    @IBAction func addNewItem(_ sender: UIBarButtonItem) {
+        var textField = UITextField()
+        let alert = UIAlertController(title: "Add new ToDoey item", message: "", preferredStyle: .alert)
+        
+        let action = UIAlertAction(title: "Add item", style: .default) { (action) in
+            // ?? "value" if it's nil we gonna set default value
+            if let text = textField.text {
+                self.itemArray.append(text)
+            }
+            // defaults saved in info.plist
+            self.defaults.set(self.itemArray, forKey: "ToDoListArray")
+            // reload data for the UI
+            self.tableView.reloadData()
+        }
+            // what will happen when user clicks add item button on UIAlert
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = "Create new item"
+            textField = alertTextField
+            // no print() will be done only when text field will be added to UIAlert
+            //  print("new item: \(String(describing: textField.text))")
+        }
+        alert.addAction(action)
+        //preent a viewController modally
+            present(alert , animated: true, completion: nil)
+        
+    }
 }
 
