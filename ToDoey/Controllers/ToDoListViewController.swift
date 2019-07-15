@@ -9,23 +9,14 @@
 import UIKit
 
 class ToDoListViewController: UITableViewController {
-
-    var defaults = UserDefaults.standard
+    let dataFilePath = FileManager.default.urls(for:   .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist ")
     
-//    var itemArray = ["Find Mike", "Buy eggos", "Destroy Demogorogn"]
+    var defaults = UserDefaults.standard
     var itemArray = [Item]()
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        itemArray.append(contentsOf:[
-            Item(text: "Find Mike", checked: false),
-            Item(text: "Buy eggos", checked: false),
-            Item(text: "Destroy Demogorogn", checked: false)
-        ])
-        
-        if let items = defaults.array(forKey: "ToDoListArray") as? [Item] {
-            itemArray = items
-        }
+        loadData()
      }
 
     // MARK: TableView DataSource methods
@@ -49,7 +40,7 @@ class ToDoListViewController: UITableViewController {
     // when select cell
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         itemArray[indexPath.row].checked = !itemArray[indexPath.row].checked
-        
+        saveData()
         tableView.reloadData()// runs cellForRow() internally
         tableView.deselectRow(at: indexPath, animated: true)
     }
@@ -58,17 +49,15 @@ class ToDoListViewController: UITableViewController {
     @IBAction func addNewItem(_ sender: UIBarButtonItem) {
         var textField = UITextField()
         let alert = UIAlertController(title: "Add new ToDoey item", message: "", preferredStyle: .alert)
-        
+        // what will happen when user clicks add item button on UIAlert
         let action = UIAlertAction(title: "Add item", style: .default) { (action) in
              if let newText = textField.text {
                 self.itemArray.append(Item(text: newText, checked: false))
             }
-            // defaults saved in info.plist
-            self.defaults.set(self.itemArray, forKey: "ToDoListArray")
+            self.saveData()
             // reload data for the UI
             self.tableView.reloadData()
         }
-            // what will happen when user clicks add item button on UIAlert
         alert.addTextField { (alertTextField) in
             alertTextField.placeholder = "Create new item"
             textField = alertTextField
@@ -80,5 +69,29 @@ class ToDoListViewController: UITableViewController {
             present(alert , animated: true, completion: nil)
         
     }
+    
+    // MARK: Data manipulating methods
+    func saveData() {
+        let encoder = PropertyListEncoder()
+        
+        do{
+            let data = try encoder.encode(itemArray)
+            try data.write(to: dataFilePath!)
+        } catch {
+            print("error encoding Item array \(error)")
+        }
+       }
+    
+      func loadData(){
+        if let data = try? Data(contentsOf: dataFilePath!) {
+            let decoder = PropertyListDecoder()
+            do{
+                itemArray = try decoder.decode([Item].self, from: data)
+            } catch {
+                print("error decoding Item array \(error)")
+            }
+        }
+    }
+    
 }
 

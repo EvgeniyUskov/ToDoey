@@ -8,11 +8,11 @@
 
 import Foundation
 
-class Item {
-    var text: String = ""
-    var checked: Bool = false
+class Item: Encodable, Decodable {
+    var text: String
+    var checked: Bool
     
-    init(text: String, checked: Bool) {
+    init (text:String, checked: Bool) {
         self.text = text
         self.checked = checked
     }
