@@ -29,15 +29,15 @@ class ToDoListViewController: UITableViewController {
      }
 
     // MARK: TableView DataSource methods
+    // when load up cells
+    // triggers when reloadData() is called
+    // runs for every row
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        print("cellForRowindexPath Called")
         let cell = tableView.dequeueReusableCell(withIdentifier:   "ToDoItemCell", for: indexPath)
-        
-        cell.textLabel?.text = itemArray[indexPath.row].text
-        if itemArray[indexPath.row].checked == true {
-            cell.accessoryType = .checkmark
-        } else {
-            cell.accessoryType = .none
-        }
+        let item = itemArray[indexPath.row]
+        cell.textLabel?.text = item.text
+        cell.accessoryType = item .checked == true ? .checkmark :  .none
         return cell
     }
 
@@ -46,12 +46,11 @@ class ToDoListViewController: UITableViewController {
     }
     
     // MARK: TableView  Delegate methods
+    // when select cell
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(itemArray[indexPath.row])
-        
         itemArray[indexPath.row].checked = !itemArray[indexPath.row].checked
         
-        tableView.reloadData()
+        tableView.reloadData()// runs cellForRow() internally
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
@@ -61,11 +60,8 @@ class ToDoListViewController: UITableViewController {
         let alert = UIAlertController(title: "Add new ToDoey item", message: "", preferredStyle: .alert)
         
         let action = UIAlertAction(title: "Add item", style: .default) { (action) in
-            // ?? "value" if it's nil we gonna set default value
-            if let newText = textField.text {
-                let newItem = Item(text: newText, checked: false)
-                self.itemArray.append(newItem)
-//                self.itemArray.append(Item(text: text, checked: false))
+             if let newText = textField.text {
+                self.itemArray.append(Item(text: newText, checked: false))
             }
             // defaults saved in info.plist
             self.defaults.set(self.itemArray, forKey: "ToDoListArray")
