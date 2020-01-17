@@ -8,40 +8,69 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
-class ToDoListViewController: UITableViewController {
+class ToDoListViewController: SwipeTableViewController {
+    //MARK: UI elements
+    @IBOutlet weak var searchBar: UISearchBar!
+    
     //MARK: Constants
     let SEARCH_BY_TITLE_QUERY = "title CONTAINS[cd] %@"
-    let SEARCH_BY_CATEGORY_QUERY = "parentCategory.title MATCHES  %@"// LIKE was MATCHES
-    
+    let SEARCH_BY_CATEGORY_QUERY = "parentCategory.title MATCHES %@"// LIKE was MATCHES
+    let drakestColorCoefficientToMinus: CGFloat = 0.5
+    let navBarOriginalColour = "1D9BF6"
     //MARK: variables
     let realm = try! Realm()
     
     var todoItems: Results<Item>? //AUTO_UPDATING container
     var selectedCategory: Category? {
-        // as soon as selectedCategory is set this Code will run
         didSet {
             loadData()
         }
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-//        print(FileManager.default.urls(for: .documentDirectory , in: .userDomainMask ))
-//        loadData()//  can call like that beacuse we have a default value for the parameter
+        tableView.rowHeight = 80
+        tableView.separatorStyle = .none
      }
-
+    
+    // runs at a timepoint when everything is loaded just before the it appears on the screen
+    override func viewWillAppear(_ animated: Bool) {
+        title = selectedCategory?.title 
+        guard let navBarColourHex = selectedCategory?.hexBackgroundColor else {fatalError()}
+        setUpNavigationBar(withHexCode: navBarColourHex)
+    }
+    
+    // Method called before vc will disappear
+    override func viewWillDisappear(_ animated: Bool) {
+        setUpNavigationBar(withHexCode: navBarOriginalColour)
+    }
+    
+    //MARK: NavBar SetUp
+    func setUpNavigationBar(withHexCode navBarColourHex: String) {
+        guard let navBar = navigationController?.navigationBar else { fatalError("NavigationController doesn't exist")}
+        guard let navBarColour = UIColor(hexString: navBarColourHex) else {fatalError()}
+        
+        navBar.barTintColor = navBarColour
+        navBar.tintColor = ContrastColorOf(navBarColour, returnFlat: true)
+        navBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: ContrastColorOf(navBarColour, returnFlat: true) ]
+        
+        searchBar.barTintColor = navBarColour
+    }
+        
     // MARK: TableView DataSource methods
-    // when load up cells
-    // triggers when reloadData() is called
-    // runs for every row
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // dequeueue reusable cell !impotant for the memory of the phone
-        let cell = tableView.dequeueReusableCell(withIdentifier:   "ToDoItemCell", for: indexPath)
-        // create new cell from the data of the item
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         if let item = todoItems?[indexPath.row] {
             cell.textLabel?.text = item.title
             cell.accessoryType = item.checked == true ? .checkmark :  .none
+            
+            if let color = UIColor(hexString: selectedCategory!.hexBackgroundColor)?.darken(byPercentage:
+                CGFloat(indexPath.row) / CGFloat(todoItems!.count) * drakestColorCoefficientToMinus) {
+                cell.backgroundColor = color
+                cell.textLabel?.textColor = ContrastColorOf (color, returnFlat: true)
+            }
         }
         else {
             cell.textLabel?.text = "No items added yet"
@@ -112,6 +141,20 @@ class ToDoListViewController: UITableViewController {
     func loadData() {
         // auto updating list
         todoItems = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
+    }
+    
+    override func updateModel(at indexPath: IndexPath) {
+        print("***delete SUBCLASS ACTION - ToDoListViewController")
+        if let itemForDeletion = self.todoItems?[indexPath.row] {
+            do {
+                try self.realm.write {
+                    self.realm.delete(itemForDeletion )
+                }
+            }
+            catch {
+                print("error deleteing Category\(error)")
+            }
+        }
     }
 }
 

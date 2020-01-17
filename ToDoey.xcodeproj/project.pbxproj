@@ -16,6 +16,7 @@
 		AAB8F5B722EF1D6000F7539B /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB8F5B622EF1D6000F7539B /* Item.swift */; };
 		AAB8F5B922EF1D6B00F7539B /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB8F5B822EF1D6B00F7539B /* Category.swift */; };
 		AAC39D1F22DEE4D500AA6CE4 /* CategoryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC39D1E22DEE4D500AA6CE4 /* CategoryTableViewController.swift */; };
+		AAEF3DD422F7E74E0093D943 /* SwipeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEF3DD322F7E74E0093D943 /* SwipeTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		AAB8F5B622EF1D6000F7539B /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		AAB8F5B822EF1D6B00F7539B /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		AAC39D1E22DEE4D500AA6CE4 /* CategoryTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTableViewController.swift; sourceTree = "<group>"; };
+		AAEF3DD322F7E74E0093D943 /* SwipeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +100,7 @@
 		AAA02A5222DC1FCF0084A41A /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				AAEF3DD322F7E74E0093D943 /* SwipeTableViewController.swift */,
 				AAC39D1E22DEE4D500AA6CE4 /* CategoryTableViewController.swift */,
 				AA3D53AA22D2EC0F0078AD57 /* ToDoListViewController.swift */,
 			);
@@ -248,6 +251,7 @@
 				AA3D53AB22D2EC0F0078AD57 /* ToDoListViewController.swift in Sources */,
 				AA3D53A922D2EC0F0078AD57 /* AppDelegate.swift in Sources */,
 				AAC39D1F22DEE4D500AA6CE4 /* CategoryTableViewController.swift in Sources */,
+				AAEF3DD422F7E74E0093D943 /* SwipeTableViewController.swift in Sources */,
 				AAB8F5B922EF1D6B00F7539B /* Category.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
